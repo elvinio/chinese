@@ -9,8 +9,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   @font-face {
-    font-family: 'LXGW WenKai TC';
-    src: url('https://cdn.jsdelivr.net/npm/cn-fontsource-lxgw-wen-kai-tc-regular/font.woff2') format('woff2');
+    font-family: 'KaiTiRegular';
+    src: url('fonts/KaiTiRegular.ttf') format('truetype');
     font-display: swap;
   }
 
@@ -30,7 +30,7 @@
   .title-zh {
     font-size: 1.9rem;
     font-weight: 700;
-    font-family: 'STKaiti', 'KaiTi', 'Kaiti SC', 'LXGW WenKai TC', serif;
+    font-family: 'KaiTiRegular', 'STKaiti', 'KaiTi', serif;
   }
   .title-en { font-size: 1.2rem; font-weight: 600; color: #666; margin-top: 0.2rem; }
 
@@ -92,7 +92,7 @@
   .zh-text {
     font-size: 1.5rem;
     line-height: 2.3;
-    font-family: 'STKaiti', 'KaiTi', 'Kaiti SC', 'LXGW WenKai TC', serif;
+    font-family: 'KaiTiRegular', 'STKaiti', 'KaiTi', serif;
   }
   .en-text p { font-size: 1.1rem; margin-bottom: 1rem; }
   .zh-text p { margin-bottom: 1rem; }
@@ -146,21 +146,21 @@
   <div class="toolbar">
     <select class="story-select" id="storySelect" aria-label="Select story"></select>
 
-    <span class="toggle-group">
+    <label class="toggle-group">
       <span class="switch">
         <input type="checkbox" id="pinyinToggle" checked>
         <span class="slider"></span>
       </span>
-      <label for="pinyinToggle">显示汉语拼音 · Show Pinyin</label>
-    </span>
+      <span>显示汉语拼音 · Show Pinyin</span>
+    </label>
 
-    <span class="toggle-group">
+    <label class="toggle-group">
       <span class="switch">
         <input type="checkbox" id="englishToggle" checked>
         <span class="slider"></span>
       </span>
-      <label for="englishToggle">显示英文 · Show English</label>
-    </span>
+      <span>显示英文 · Show English</span>
+    </label>
   </div>
 
   <div class="columns">
