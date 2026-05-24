@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chinese Stories</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  @font-face {
+    font-family: 'LXGW WenKai TC';
+    src: url('https://cdn.jsdelivr.net/npm/cn-fontsource-lxgw-wen-kai-tc-regular/font.woff2') format('woff2');
+    font-display: swap;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #ffffff;
+    color: #222;
+    line-height: 1.6;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  .wrap { max-width: 1000px; margin: 0 auto; }
+
+  header { margin-bottom: 1.5rem; }
+  .title-zh {
+    font-size: 1.9rem;
+    font-weight: 700;
+    font-family: 'STKaiti', 'KaiTi', 'Kaiti SC', 'LXGW WenKai TC', serif;
+  }
+  .title-en { font-size: 1.2rem; font-weight: 600; color: #666; margin-top: 0.2rem; }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.6rem;
+    margin: 1.2rem 0 1.8rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid #e2e2e2;
+    font-size: 0.95rem;
+  }
+
+  .story-select {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #222;
+    background: #fff;
+    border: 1.5px solid #ccc;
+    border-radius: 6px;
+    padding: 0.3rem 0.6rem;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .story-select:focus { border-color: #4a9aa8; }
+
+  .toggle-group { display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap; }
+  .switch { position: relative; width: 50px; height: 26px; flex-shrink: 0; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; cursor: pointer; inset: 0;
+    background: #ccc; border-radius: 999px; transition: background 0.2s;
+  }
+  .slider::before {
+    content: ""; position: absolute;
+    height: 20px; width: 20px; left: 3px; top: 3px;
+    background: #fff; border-radius: 50%; transition: transform 0.2s;
+  }
+  .switch input:checked + .slider { background: #4a9aa8; }
+  .switch input:checked + .slider::before { transform: translateX(24px); }
+
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+  }
+  .col-head {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #999;
+    margin-bottom: 0.8rem;
+  }
+
+  .zh-text {
+    font-size: 1.5rem;
+    line-height: 2.3;
+    font-family: 'STKaiti', 'KaiTi', 'Kaiti SC', 'LXGW WenKai TC', serif;
+  }
+  .en-text p { font-size: 1.1rem; margin-bottom: 1rem; }
+  .zh-text p { margin-bottom: 1rem; }
+
+  /* character + pinyin stack — used for ALL tokens including punctuation */
+  .w {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    vertical-align: bottom;
+    line-height: 1.15;
+  }
+  .py {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.7rem;
+    color: #4a9aa8;
+    font-weight: 700;
+    line-height: 1.2;
+    display: none;
+  }
+  body.show-pinyin .py { display: block; margin-bottom: 2px; }
+  body.show-pinyin .zh-text { line-height: 2.7; }
+
+  /* punctuation: tighten horizontal spacing */
+  .w.punct { letter-spacing: 0; }
+
+  body.hide-english .col-en { display: none; }
+  body.hide-english .columns { grid-template-columns: 1fr; }
+
+  @media (max-width: 720px) {
+    .columns { grid-template-columns: 1fr; gap: 2rem; }
+  }
+
+  @media print {
+    .toolbar { display: none; }
+    body { padding: 0; }
+    .col-en { display: block !important; }
+    .columns { grid-template-columns: 1fr 1fr !important; }
+    @page { margin: 1.5cm; }
+  }
+</style>
+</head>
+<body class="show-pinyin">
+<div class="wrap">
+
+  <header>
+    <h1 class="title-zh" id="titleZh"></h1>
+    <p class="title-en" id="titleEn"></p>
+  </header>
+
+  <div class="toolbar">
+    <select class="story-select" id="storySelect" aria-label="Select story"></select>
+
+    <span class="toggle-group">
+      <span class="switch">
+        <input type="checkbox" id="pinyinToggle" checked>
+        <span class="slider"></span>
+      </span>
+      <label for="pinyinToggle">显示汉语拼音 · Show Pinyin</label>
+    </span>
+
+    <span class="toggle-group">
+      <span class="switch">
+        <input type="checkbox" id="englishToggle" checked>
+        <span class="slider"></span>
+      </span>
+      <label for="englishToggle">显示英文 · Show English</label>
+    </span>
+  </div>
+
+  <div class="columns">
+    <div>
+      <div class="col-head">华文 Chinese</div>
+      <div class="zh-text" id="zh"></div>
+    </div>
+    <div class="col-en">
+      <div class="col-head">English</div>
+      <div class="en-text" id="en"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const PUNCT_RE    = /^[，。！？、：；…—""''「」『』【】〔〕·～\-–—]+$/;
+// Closing punctuation must not start a line — attach to preceding token
+const CLOSING_RE  = /^[，。！？、：；"'」』】〕…—]+$/;
+// Opening punctuation must not end a line — attach to following token
+const OPENING_RE  = /^["'「『【〔]+$/;
+
+function makeW(ch, py) {
+  const w = document.createElement('span');
+  w.className = 'w' + (PUNCT_RE.test(ch) ? ' punct' : '');
+  const pyEl = document.createElement('span');
+  pyEl.className = 'py';
+  pyEl.textContent = py;
+  const chEl = document.createElement('span');
+  chEl.textContent = ch;
+  w.appendChild(pyEl);
+  w.appendChild(chEl);
+  return w;
+}
+
+function appendNoBreak(parent, ...nodes) {
+  const g = document.createElement('span');
+  g.style.whiteSpace = 'nowrap';
+  nodes.forEach(n => g.appendChild(n));
+  parent.appendChild(g);
+}
+
+function renderStory(story) {
+  document.getElementById('titleZh').textContent = story.titleZh;
+  document.getElementById('titleEn').textContent = story.titleEn;
+  document.title = story.titleZh + ' · ' + story.titleEn;
+
+  const zhEl = document.getElementById('zh');
+  const enEl = document.getElementById('en');
+  zhEl.innerHTML = '';
+  enEl.innerHTML = '';
+
+  story.paragraphs.forEach(({ zh, en }) => {
+    // Chinese paragraph
+    const p = document.createElement('p');
+    let pending = []; // opening punctuation waiting to attach to next char
+
+    zh.forEach(([ch, py]) => {
+      const w = makeW(ch, py);
+
+      if (CLOSING_RE.test(ch) && p.lastChild) {
+        // Glue closing punctuation to the preceding element
+        const prev = p.lastChild;
+        p.removeChild(prev);
+        appendNoBreak(p, prev, w);
+      } else if (OPENING_RE.test(ch)) {
+        // Defer opening punctuation until the next character
+        pending.push(w);
+      } else {
+        if (pending.length) {
+          appendNoBreak(p, ...pending, w);
+          pending = [];
+        } else {
+          p.appendChild(w);
+        }
+      }
+    });
+    // Flush any trailing opening punctuation (edge case)
+    pending.forEach(w => p.appendChild(w));
+
+    zhEl.appendChild(p);
+
+    // English paragraph
+    const ep = document.createElement('p');
+    ep.textContent = en;
+    enEl.appendChild(ep);
+  });
+}
+
+async function loadStory(id) {
+  const res = await fetch('stories/' + id + '.json');
+  const story = await res.json();
+  renderStory(story);
+}
+
+async function init() {
+  const res = await fetch('stories/index.json');
+  const manifest = await res.json();
+
+  const select = document.getElementById('storySelect');
+  manifest.forEach(({ id, titleZh, titleEn }) => {
+    const opt = document.createElement('option');
+    opt.value = id;
+    opt.textContent = titleZh + ' · ' + titleEn;
+    select.appendChild(opt);
+  });
+
+  // Load story from URL param or default to first
+  const params = new URLSearchParams(location.search);
+  const initialId = params.get('story') || manifest[0].id;
+  const matchedOpt = select.querySelector('option[value="' + initialId + '"]');
+  if (matchedOpt) matchedOpt.selected = true;
+  loadStory(select.value);
+
+  select.addEventListener('change', () => {
+    const url = new URL(location);
+    url.searchParams.set('story', select.value);
+    history.replaceState(null, '', url);
+    loadStory(select.value);
+  });
+}
+
+document.getElementById('pinyinToggle').addEventListener('change', e => {
+  document.body.classList.toggle('show-pinyin', e.target.checked);
+});
+
+document.getElementById('englishToggle').addEventListener('change', e => {
+  document.body.classList.toggle('hide-english', !e.target.checked);
+});
+
+init();
+</script>
+</body>
+</html>
