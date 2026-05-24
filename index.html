@@ -109,7 +109,6 @@
     font-family: 'Nunito', sans-serif;
     font-size: 0.7rem;
     color: #4a9aa8;
-    font-weight: 700;
     line-height: 1.2;
     display: none;
   }
@@ -121,6 +120,7 @@
 
   body.hide-english .col-en { display: none; }
   body.hide-english .columns { grid-template-columns: 1fr; }
+  body.hide-english .title-en { display: none; }
 
   @media (max-width: 720px) {
     .columns { grid-template-columns: 1fr; gap: 2rem; }
@@ -129,11 +129,11 @@
   @media print {
     .toolbar { display: none; }
     body { padding: 0; font-size: 0.75rem; }
-    .col-en { display: block !important; }
     .col-en p { font-size: 0.85rem; }
-    .columns { grid-template-columns: 1fr 1fr !important; }
-    .zh-text { font-size: 1.1rem; }
-    .py { font-size: 0.55rem; }
+    .py { color: #000; }
+    .title-zh { font-weight: normal; }
+    /* Respect the English toggle state when printing */
+    body:not(.hide-english) .columns { grid-template-columns: 1fr 1fr !important; }
     @page { margin: 1.5cm; }
   }
 </style>
